@@ -41,9 +41,9 @@ AdversarialShield/
 ## Current Status
 
 - [x] Day 1: Project setup and data exploration
-- [ ] Day 2-3: Data preprocessing
-- [ ] Week 2: Base classifier training
-- [ ] Week 3-4: Attack implementation
+- [x] Day 2-3: Data preprocessing
+- [x] Week 2: Base classifier training
+- [x] Week 3-4: Attack implementation
 - [ ] Week 5-7: Defense implementation
 - [ ] Week 8: Benchmarking
 
