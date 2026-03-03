@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # AdversarialShield
 
 A comprehensive evaluation framework for adversarial robustness in network intrusion detection systems.
@@ -56,4 +55,3 @@ Ashish Kaushik
 ## License
 
 MIT
-EOF
