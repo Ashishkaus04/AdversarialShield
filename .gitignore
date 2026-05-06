@@ -19,6 +19,7 @@ data/processed/*.csv
 data/processed/*.npy
 *.pkl
 *.joblib
+*.zip
 
 # IDE
 .vscode/
@@ -29,3 +30,7 @@ data/processed/*.npy
 
 # Kaggle
 .kaggle/
+
+#report
+report_content.md
+report_content.pdf
