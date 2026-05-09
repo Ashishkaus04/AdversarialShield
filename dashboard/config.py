@@ -1,4 +1,36 @@
 """Configuration and shared data for AdversarialShield Dashboard."""
+import os
+import pandas as pd
+
+# === PATHS ===
+_DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(_DASHBOARD_DIR, ".."))
+RESULTS_DIR = os.path.join(PROJECT_ROOT, "results")
+FIGURES_DIR = os.path.join(RESULTS_DIR, "figures")
+BENCHMARKS_DIR = os.path.join(RESULTS_DIR, "benchmarks")
+EXPLANATIONS_DIR = os.path.join(RESULTS_DIR, "explanations")
+CERTIFICATION_DIR = os.path.join(RESULTS_DIR, "certification")
+
+
+def load_csv(filename, subdir="benchmarks"):
+    """Load a CSV from results/<subdir>/filename. Returns a DataFrame or None."""
+    dirs = {
+        "benchmarks": BENCHMARKS_DIR,
+        "explanations": EXPLANATIONS_DIR,
+        "certification": CERTIFICATION_DIR,
+        "results": RESULTS_DIR,
+    }
+    path = os.path.join(dirs.get(subdir, RESULTS_DIR), filename)
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    return None
+
+
+def get_figure_path(filename):
+    """Return full path to a figure, or None if missing."""
+    path = os.path.join(FIGURES_DIR, filename)
+    return path if os.path.exists(path) else None
+
 
 # === PROJECT DATA ===
 DEMO_DATA = {
@@ -15,10 +47,26 @@ DEMO_DATA = {
         'Ensemble':             {'clean': 99.98, 'fgsm': 97.15, 'pgd': 97.0,  'cw': 95.0},
         'Combined':             {'clean': 99.98, 'fgsm': 97.40, 'pgd': 97.0,  'cw': 83.25},
     },
-    'num_samples': 138541,
-    'total_flows': 692703,
+    'num_samples': 311960,
+    'total_flows': 1039866,
     'num_features': 41,
 }
+
+# === COLOR PALETTE ===
+COLORS = {
+    'blue': '#3b82f6',
+    'purple': '#8b5cf6',
+    'green': '#10b981',
+    'red': '#ef4444',
+    'orange': '#f59e0b',
+    'cyan': '#06b6d4',
+    'pink': '#ec4899',
+    'slate': '#94a3b8',
+    'lime': '#84cc16',
+    'amber': '#f59e0b',
+}
+
+MODEL_COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#f97316']
 
 # === CSS STYLES ===
 CUSTOM_CSS = """
@@ -56,6 +104,7 @@ section[data-testid="stSidebar"] .stRadio label:hover { color: #60a5fa !importan
 .text-red { color: #ef4444; }
 .text-orange { color: #f59e0b; }
 .text-purple { color: #8b5cf6; }
+.text-cyan { color: #06b6d4; }
 
 /* Badges */
 .badge {
@@ -66,6 +115,8 @@ section[data-testid="stSidebar"] .stRadio label:hover { color: #60a5fa !importan
 .badge-blue { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
 .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
 .badge-green { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+.badge-orange { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.badge-red { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
 
 /* Info boxes */
 .info-box {
@@ -155,6 +206,65 @@ section[data-testid="stSidebar"] .stRadio label:hover { color: #60a5fa !importan
     height: 2px; border: none; margin: 24px 0;
     background: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, transparent);
 }
+
+/* ═══ Gallery Cards ═══ */
+.gallery-card {
+    background: linear-gradient(135deg, #1e293b 0%, #293548 100%);
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid rgba(59,130,246,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 16px;
+}
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(59,130,246,0.2);
+}
+.gallery-card img {
+    width: 100%; display: block; border-bottom: 1px solid rgba(59,130,246,0.1);
+}
+.gallery-card .gallery-caption {
+    padding: 12px 16px; font-size: 0.85rem; color: #94a3b8;
+}
+.gallery-card .gallery-caption strong { color: #e2e8f0; }
+
+/* ═══ Pipeline / Flow Diagram ═══ */
+.pipeline-step {
+    background: linear-gradient(135deg, #1e293b 0%, #293548 100%);
+    border-radius: 12px; padding: 16px 20px; text-align: center;
+    border: 1px solid rgba(59,130,246,0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+.pipeline-step:hover { transform: scale(1.03); }
+.pipeline-step .step-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.pipeline-step .step-title { font-size: 0.9rem; font-weight: 700; color: #e2e8f0; }
+.pipeline-step .step-sub { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+/* ═══ Stat mini-card ═══ */
+.stat-mini {
+    background: rgba(30,41,59,0.7); border-radius: 10px; padding: 14px;
+    border: 1px solid rgba(59,130,246,0.12); text-align: center;
+}
+.stat-mini .stat-val { font-size: 1.6rem; font-weight: 800; }
+.stat-mini .stat-lbl { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+/* ═══ Section header ═══ */
+.section-header {
+    font-size: 1.4rem; font-weight: 700; color: #e2e8f0;
+    border-left: 4px solid #3b82f6; padding-left: 12px; margin: 24px 0 16px 0;
+}
+
+/* ═══ Figure display ═══ */
+.figure-frame {
+    background: #0f172a; border-radius: 12px; padding: 12px;
+    border: 1px solid rgba(59,130,246,0.15); margin: 8px 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.figure-caption {
+    text-align: center; font-size: 0.82rem; color: #64748b;
+    margin-top: 8px; font-style: italic;
+}
 </style>
 """
 
@@ -167,3 +277,47 @@ CHART_LAYOUT = dict(
     margin=dict(l=40, r=20, t=50, b=40),
     hoverlabel=dict(bgcolor='#1e293b', font_size=13, font_family='Inter'),
 )
+
+# === FIGURE CATALOG ===
+FIGURE_CATALOG = {
+    "Baseline & Data Exploration": [
+        ("class_distribution.png", "Class Distribution", "01_data_exploration"),
+        ("feature_distributions.png", "Feature Distributions", "01_data_exploration"),
+        ("baseline_confusion_matrix.png", "Baseline Confusion Matrix", "03_baseline_classifier"),
+        ("baseline_roc_curve.png", "Baseline ROC Curve", "03_baseline_classifier"),
+        ("baseline_feature_importance.png", "Baseline Feature Importance", "03_baseline_classifier"),
+        ("baseline_model_comparison.png", "Model Comparison Benchmark", "03a_model_comparison"),
+        ("train_test_performance_evaluation.png", "Train/Test Performance", "03_baseline_classifier"),
+        ("accuracy_comparison_bar.png", "Accuracy Comparison Bar", "03a_model_comparison"),
+    ],
+    "Attack Results": [
+        ("fgsm_attack_results.png", "FGSM Attack Results", "04_fgsm_attack"),
+        ("fgsm_confusion_comparison.png", "FGSM Confusion Comparison", "04_fgsm_attack"),
+        ("attack_comparison_confusion_matrices.png", "Attack Confusion Matrices", "05_pgd_attack"),
+        ("cw_comprehensive_comparison.png", "C&W Comprehensive Comparison", "06_cw_attack"),
+        ("cw_transfer_confusion_matrices.png", "C&W Transfer Confusion Matrices", "06_cw_attack"),
+        ("cross_model_transfer_analysis.png", "Cross-Model Transfer Analysis", "07_cross_model_transfer"),
+    ],
+    "Defense Results": [
+        ("adversarial_training_effectiveness.png", "Adversarial Training Effectiveness", "08_adversarial_training"),
+        ("complete_defense_benchmark.png", "Complete Defense Benchmark", "09_additional_defenses"),
+    ],
+    "Advanced Analysis": [
+        ("adaptive_attacks_evaluation.png", "Adaptive Attacks Evaluation", "10_adaptive_attacks"),
+        ("backdoor_attack_evaluation.png", "Backdoor Attack Evaluation", "12_backdoor_attack"),
+        ("certified_robustness_analysis.png", "Certified Robustness Analysis", "14_certified_robustness"),
+        ("certified_robustness_finite_radii.png", "Certified Robustness — Finite Radii", "14_certified_robustness"),
+        ("continual_defense_evolution.png", "Continual Defense Evolution", "15_continual_defense"),
+    ],
+    "Explainability (SHAP)": [
+        ("shap_summary_global.png", "SHAP Global Summary", "13_shap_explainability"),
+        ("shap_comparison_clean_vs_adversarial.png", "SHAP Clean vs Adversarial", "13_shap_explainability"),
+        ("shap_waterfall_clean_attack.png", "SHAP Waterfall — Clean Attack", "13_shap_explainability"),
+        ("shap_waterfall_fgsm_attack.png", "SHAP Waterfall — FGSM Attack", "13_shap_explainability"),
+    ],
+    "Threat Maps": [
+        ("threat_map_overview.png", "Threat Map Overview", "11_threat_map_visualization"),
+        ("threat_map_perturbation_magnitude.png", "Perturbation Magnitude Map", "11_threat_map_visualization"),
+        ("threat_map_publication_quality.png", "Publication-Quality Threat Map", "11_threat_map_visualization"),
+    ],
+}
